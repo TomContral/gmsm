@@ -1,0 +1,82 @@
+
+测试前准备
+1.将gmsm文件夹移动到$gopath/src/github.com目录下
+2.将gmsm文件夹中的golang.org文件夹放在$gopath/src目录下
+4.将gmsm文件夹中的.go文件放在fabric网络的chaincode/gmsm目录下
+
+~/fabric/configs
+
+1.创建通道
+/opt/fabric/bin/peer  channel create -o orderer1.gssx.com:7050 -f ./channel-artifacts/channel.tx -c mychannel --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem
+
+2.加入通道
+/opt/fabric/bin/peer  channel join -b mychannel.block
+
+3.安装链码
+/opt/fabric/bin/peer  chaincode install -n wsw3 -v 2.0 -p github.com/hyperledger/fabric/examples/chaincode/go/gmsm
+
+4.初始化链码
+/opt/fabric/bin/peer  chaincode instantiate -o orderer1.gssx.com:7050 --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -v 2.0 -c '{"Args":["invoke","put","noencrypt","a"]}' -P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member')"
+
+5.调用链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","put","noencrypt","a","b"]}'
+
+6.冻结链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","freeze","a"]}'
+
+7.查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","noencrypt","a"]}'
+
+8.解冻链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","rmfreeze","a"]}'
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+加密
+
+1 .sm2
+
+调用链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","put","sm2","a","b","04A83BB1947576F7B3939D825540F6CE10FC0ED05B1BF113F90334B612F0598F99EAD20D3121C76AF6E0060D1D1393AE0E4F13B06EB3788F611C024856FB963DD5"]}'
+查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","noencrypt","a"]}'
+
+解密链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","sm2","a","32DBC98398DD04266F0644560096C2A8D1ECF4C6899BF9FB784BC488C67042FF"]}'
+
+2.ecc
+调用链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","put","ecc","a","b","04AD2A1D71563CD7F231ED6D04907173053961FC10E45ADF6DD7B4A7084FA130414B8E7CCB23DE0B6ED47DF833BB65D5C0B3D4CFC44209A38D19BC1A6DE430F340"]}'
+查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","noencrypt","a"]}'
+
+查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","ecc","a","287E3A5D47DE1CD87CA845F289729B3DB8FF816FE9BEF0865A32B507F22EA427"]}'
+
+3.sm3
+调用链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","put","sm3","a","b"]}'
+查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","sm3","a"]}'
+
+4.sha256
+调用链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","put","sha256","a","b"]}'
+查询链码
+/opt/fabric/bin/peer  chaincode invoke -o orderer1.gssx.com:7050  --tls true --cafile ~/fabric/configs/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem -C mychannel -n wsw3 -c '{"Args":["invoke","get","sha256","a"]}'
+
+
+////////////////////////////////////////////////////////////////////
+export FABRIC_ROOT=/opt/fabric
+export FABRIC_CFG_PATH=~/fabric/configs
+
+export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_PEER_MSPCONFIGPATH=$FABRIC_CFG_PATH/crypto-config/peerOrganizations/org1/users/Admin@org1/msp
+export CORE_PEER_ADDRESS=peer0.org1:7051
+
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_TLS_ROOTCERT_FILE=$FABRIC_CFG_PATH/crypto-config/peerOrganizations/org1/peers/peer0.org1/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=$FABRIC_CFG_PATH/crypto-config/peerOrganizations/org1/peers/peer0.org1/tls/server.key
+export CORE_PEER_TLS_CERT_FILE=$FABRIC_CFG_PATH/crypto-config/peerOrganizations/org1/peers/peer0.org1/tls/server.crt
+
+export ordererCa=$FABRIC_CFG_PATH/crypto-config/ordererOrganizations/gssx.com/orderers/orderer1.gssx.com/msp/tlscacerts/tlsca.gssx.com-cert.pem
+
